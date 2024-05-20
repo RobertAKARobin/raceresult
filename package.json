@@ -13,8 +13,8 @@
 	},
 	"name": "todo1",
 	"scripts": {
-		"do:build": "esbuild --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
-		"do:serve": "esbuild --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
+		"do:build": "esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
+		"do:serve": "esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
 		"lint": "npm run lint:ts && echo 'TODO npm run lint:css' && npm run lint:html",
 		"lint:css": "stylelint dist/**/*.css",
 		"lint:html": "html-validate dist",
