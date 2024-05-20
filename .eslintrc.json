@@ -1,0 +1,4 @@
+{
+	"extends": "@robertakarobin/eslint-config-ts",
+	"root": true
+}

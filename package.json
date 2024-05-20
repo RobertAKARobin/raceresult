@@ -1,0 +1,28 @@
+{
+	"dependencies": {
+		"@robertakarobin/util": "^0.0.417",
+		"esbuild": "^0.21.3"
+	},
+	"description": "todo1",
+	"devDependencies": {
+		"@robertakarobin/csslint": "^0.0.26",
+		"@robertakarobin/eslint-config-ts": "^0.0.45",
+		"@robertakarobin/htmlvalidate": "^0.0.9",
+		"husky": "^9.0.11",
+		"npm-check-updates": "^16.14.20"
+	},
+	"name": "todo1",
+	"scripts": {
+		"do:build": "esbuild --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
+		"do:serve": "esbuild --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
+		"lint": "npm run lint:ts && echo 'TODO npm run lint:css' && npm run lint:html",
+		"lint:css": "stylelint dist/**/*.css",
+		"lint:html": "html-validate dist",
+		"lint:ts": "eslint .",
+		"prepare": "husky && ncu -u",
+		"start": "npm run do:serve",
+		"test": "npm run lint && npx tsc"
+	},
+	"type": "module",
+	"version": "0.0.1"
+}
