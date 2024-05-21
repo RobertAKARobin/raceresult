@@ -11,4 +11,5 @@ const unnested = await postcss([postcssNested]).process(styles, {
 	from: undefined,
 });
 fs.writeFileSync(target, unnested.css);
-execSync(`stylelint --fix ${target}`);
+execSync(`stylelint ${target} --fix`);
+execSync(`stylelint ${target} --fix`); // Misses a few things the first time

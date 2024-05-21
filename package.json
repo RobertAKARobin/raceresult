@@ -20,7 +20,7 @@
 		"css:watch": "tsx --watch-preserve-output --watch css.ts",
 		"do:build": "npm run css:build && esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
 		"do:serve": "npm run css:watch & esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
-		"lint": "npm run lint:ts && echo 'TODO npm run lint:css' && npm run lint:html",
+		"lint": "npm run lint:ts && npm run lint:css && npm run lint:html",
 		"lint:css": "stylelint dist/**/*.css",
 		"lint:html": "html-validate dist",
 		"lint:ts": "eslint .",
