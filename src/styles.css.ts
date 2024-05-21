@@ -31,7 +31,9 @@ body {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	padding: ${theme.vars.gap};
+	margin: ${theme.vars.gap} 0;
+	overflow: hidden;
+	padding: 0 ${theme.vars.gap};
 	width: 100vw;
 
 	& > ._head {
@@ -45,8 +47,8 @@ body {
 		flex-grow: 1;
 		grid-auto-columns: minmax(240px, 1fr);
 		grid-auto-flow: column;
+		margin: calc(${theme.vars.gap} * 2) 0;
 		overflow: auto;
-		padding: calc(${theme.vars.gap} * 2) 0;
 
 		& > * {
 			height: 100%;

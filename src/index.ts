@@ -5,12 +5,41 @@ import { sortOn } from '@robertakarobin/util/group/sortOn.ts';
 // import { getEventById } from './api.ts';
 // const event = await getEventById(`288014`, `65JG83PJ6CASC4MB89V133LGNSPSTW91`);
 
+import type * as Local from '@src/types.d.ts';
 import { getEventMock } from '@src/api.ts';
 const event = await getEventMock();
 
 document.title = event.name;
 
-const template = html`
+const Match = (match: Local.Match) => html`
+<div class="cell _match">
+	<h3 class="_head">M ${match.id}</h3>
+
+	<table>
+		${Object.entries(match.timesByBibId)
+			.sort(sortOn(([_nil, time]) => time))
+			.map(
+				([bibId, time]) => {
+					const entrant = event.participantsByBibId[bibId];
+					return html`
+						<tr
+							class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
+						>
+							<td class="_bib">#${entrant.bibId}</td>
+							<td class="_name">
+								${entrant.nameFirst}
+								${capitalize(entrant.nameLast)}
+							</td>
+							<td class="-numeric">${time ?? ``}</td>
+						</tr>
+					`;
+				}
+			)}
+	</table>
+</div>
+`;
+
+const Event = (event: Local.Event) => html`
 <div class="_event">
 	<h1 class="_head">${event.name}</h1>
 
@@ -23,33 +52,7 @@ const template = html`
 					${Object.values(event.matchesById)
 						.filter(match => match.roundId === round.id)
 						.sort(sortOn(match => match.id))
-						.map(match => html`
-							<div class="cell _match">
-								<h3 class="_head">M ${match.id}</h3>
-
-								<table>
-									${Object.entries(match.timesByBibId)
-										.sort(sortOn(([_nil, time]) => time))
-										.map(
-											([bibId, time]) => {
-												const entrant = event.participantsByBibId[bibId];
-												return html`
-													<tr
-														class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
-													>
-														<td class="_bib">#${entrant.bibId}</td>
-														<td class="_name">
-															${entrant.nameFirst}
-															${capitalize(entrant.nameLast)}
-														</td>
-														<td class="-numeric">${time ?? ``}</td>
-													</tr>
-												`;
-											}
-										)}
-								</table>
-							</div>
-						`)
+						.map(Match)
 					}
 				</div>
 			</div>
@@ -59,4 +62,4 @@ const template = html`
 </div>
 `;
 
-document.body.innerHTML = template;
+document.body.innerHTML = Event(event);
