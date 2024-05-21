@@ -14,14 +14,102 @@ export default css`
 
 ${theme.typeClasses}
 
+a {
+	color: blue;
+	text-decoration: underline;
+}
+
 body {
 	color: #444444;
+}
+
+button,
+input {
+	border-radius: 4px;
+	box-sizing: border-box;
+	height: 50px;
+}
+
+button {
+	align-items: center;
+	cursor: pointer;
+	display: inline-flex;
+	justify-content: center;
+	line-height: 1.2rem;
+	padding: 0 2rem;
+	transition: background-color 0.2s;
+
+	&:disabled {
+		cursor: default;
+	}
+}
+
+input {
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	line-height: 50px;
+	padding: 0 1rem;
 }
 
 td,
 th {
 	&.numeric {
 		text-align: right !important;
+	}
+}
+
+._splash {
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	height: 100vh;
+	justify-content: center;
+	min-height: 400px;
+	min-width: 320px;
+	padding: 40px;
+	text-align: center;
+	width: 100%;
+
+	& form {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		max-width: 600px;
+		row-gap: ${theme.vars.margin};
+		width: 100%;
+
+		& button {
+			background-color: #0055ff;
+			color: #ffffff;
+
+			&:disabled {
+				background-color: #555555;
+				font-size: 0;
+
+				&:after {
+					content: 'Loading...';
+					font-size: 1rem;
+				}
+			}
+		}
+
+		& input {
+			text-align: center;
+			width: 100%;
+		}
+
+		& ._errors {
+			color: red;
+			white-space: pre-wrap;
+
+			&:empty {
+				display: none;
+			}
+		}
+	}
+
+	& h1 {
+		font-weight: bold;
 	}
 }
 
@@ -35,8 +123,13 @@ th {
 	width: 100vw;
 
 	& > ._head {
-		font-weight: bold;
+		column-gap: calc(2 * ${theme.vars.margin});
+		display: flex;
 		margin-bottom: ${theme.vars.margin};
+
+		& ._title {
+			font-weight: bold;
+		}
 	}
 
 	& ._rounds {

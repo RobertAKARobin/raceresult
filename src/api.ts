@@ -1,10 +1,9 @@
-import { apiFactory } from '@robertakarobin/util/web/api.ts';
 import { fetchText } from '@robertakarobin/util/fetchText.ts';
 import { keysOf } from '@robertakarobin/util/group/keysOf.ts';
 
 import type * as Local from '@src/types.d.ts';
 
-type Particpant = {
+type Participant = {
 	DisplayName: string;
 	Event: string;
 	QualifyingRank: number;
@@ -25,7 +24,14 @@ type Particpant = {
 	WonRound4: boolean;
 };
 
-export function eventFromApi(input: Array<Particpant>): Local.Event {
+const apiKeysByLocalKey = {
+	isBye: (roundId: number) => `r${roundId}Bye` as `r1Bye`,
+	isWin: (roundId: number) => `WonRound${roundId}` as `WonRound1`,
+	matchId: (roundId: number) => `r${roundId}MatchNumber` as `r1MatchNumber`,
+	time: (roundId: number) => `TimeRound${roundId}` as `TimeRound1`,
+} as const;
+
+export function eventFromApi(input: Array<Participant>): Local.Event {
 	const event: Local.Event = {
 		matchesById: {},
 		name: undefined as unknown as string,
@@ -41,7 +47,7 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 		}
 
 		if (apiParticipant.Event !== event.name) {
-			throw new Error(`Event name was '${apiParticipant.Event}'; expected ${event.name}`);
+			throw new Error(`${apiParticipant.DisplayName} event is '${apiParticipant.Event}'; expected '${event.name}'`);
 		}
 
 		const [_, nameFirst, nameLast, bibId] = apiParticipant.DisplayName.match(nameMatch)!;
@@ -58,10 +64,10 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 			roundId += 1;
 
 			const result = {
-				isBye: apiParticipant[`r${roundId}Bye` as keyof Particpant] as Particpant[`r1Bye`],
-				isWin: apiParticipant[`WonRound${roundId}` as keyof Particpant] as Particpant[`WonRound1`],
-				matchId: apiParticipant[`r${roundId}MatchNumber` as keyof Particpant] as Particpant[`r1MatchNumber`],
-				time: apiParticipant[`TimeRound${roundId}` as keyof Particpant] as Particpant[`TimeRound1`],
+				isBye: apiParticipant[apiKeysByLocalKey.isBye(roundId)],
+				isWin: apiParticipant[apiKeysByLocalKey.isWin(roundId)],
+				matchId: apiParticipant[apiKeysByLocalKey.matchId(roundId)],
+				time: apiParticipant[apiKeysByLocalKey.time(roundId)],
 			};
 
 			if (Object.values(result).every(value => value === undefined)) {
@@ -70,7 +76,7 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 
 			for (const key of keysOf(result)) {
 				if (result[key] === undefined && key !== `isBye`) {
-					throw new Error(`Round ${roundId} is missing data for '${key}'`);
+					throw new Error(`'${apiParticipant.DisplayName}' is missing '${apiKeysByLocalKey[key](roundId)}'`);
 				}
 			}
 
@@ -108,20 +114,21 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 	return event;
 }
 
-export const raceResultApi = apiFactory(`https://api.raceresult.com/`, {
-	preprocess: params => delete params.headers, // Throws CORS error if headers are sent
-});
+export const getEventByUrl = async(url: string) => {
+	if (url.length === 0) {
+		throw new Error(`Invalid URL`);
+	}
 
-export const getEventById = async(param1: string, param2: string) => {
-	const result: Array<Particpant> = await raceResultApi({
-		at: `${param1}/${param2}`,
-		format: `json`,
-		method: `GET`,
-	});
+	const request = await fetch(url.trim());
+	const result = await request.json() as Array<Participant>;
+	if (`error` in result) {
+		throw new Error(`RaceResult returned invalid results. Is your URL correct?`);
+	}
+
 	return eventFromApi(result);
 };
 
 export const getEventMock = async() => {
-	const result = JSON.parse(await fetchText(`/mock.json`)) as Array<Particpant>;
+	const result = JSON.parse(await fetchText(`/mock.json`)) as Array<Participant>;
 	return eventFromApi(result);
 };
