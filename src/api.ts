@@ -29,9 +29,11 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 	const event: Local.Event = {
 		matchesById: {},
 		name: undefined as unknown as string,
-		participantsByName: {},
+		participantsByBibId: {},
 		roundsById: {},
 	};
+
+	const nameMatch = /(\w+)\s(\w+)\((\d+)\)/;
 
 	for (const apiParticipant of input) {
 		if (typeof event.name === `undefined`) {
@@ -42,11 +44,14 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 			throw new Error(`Event name was '${apiParticipant.Event}'; expected ${event.name}`);
 		}
 
+		const [_, nameFirst, nameLast, bibId] = apiParticipant.DisplayName.match(nameMatch)!;
 		const participant: Local.Participant = {
-			name: apiParticipant.DisplayName,
+			bibId,
+			nameFirst,
+			nameLast,
 			rank: apiParticipant.QualifyingRank,
 		};
-		event.participantsByName[participant.name] = participant;
+		event.participantsByBibId[participant.bibId] = participant;
 
 		let roundId = 0;
 		while (true) {
@@ -83,20 +88,19 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 				id: result.matchId,
 				roundId,
 				status: `incomplete`,
-				timesByParticipantName: {},
-				winnerName: undefined,
+				timesByBibId: {},
+				winnerBibId: undefined,
 			};
 
-			match.timesByParticipantName[participant.name] = result.time;
+			match.timesByBibId[participant.bibId] = result.time;
 
 			if (result.isWin) {
 				match.status = `complete`;
-				match.winnerName = participant.name;
+				match.winnerBibId = participant.bibId;
 			}
 
 			if (result.isBye) {
-				match.status = `bye`;
-				match.winnerName = participant.name;
+				match.timesByBibId[participant.bibId] = `bye`;
 			}
 		}
 	}

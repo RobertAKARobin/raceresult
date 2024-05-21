@@ -1,20 +1,22 @@
 export type Event = {
 	matchesById: Record<Match[`id`], Match>;
 	name: string;
-	participantsByName: Record<Participant[`name`], Participant>;
+	participantsByBibId: Record<Participant[`bibId`], Participant>;
 	roundsById: Record<Round[`id`], Round>;
 };
 
 export type Match = {
 	id: number;
 	roundId: Round[`id`];
-	status: `bye` | `complete` | `incomplete`;
-	timesByParticipantName: Record<Participant[`name`], string>;
-	winnerName: Participant[`name`] | undefined;
+	status: `complete` | `incomplete`;
+	timesByBibId: Record<Participant[`bibId`], string>;
+	winnerBibId: Participant[`bibId`] | undefined;
 };
 
 export type Participant = {
-	name: string;
+	bibId: string;
+	nameFirst: string;
+	nameLast: string;
 	rank: number;
 };
 
