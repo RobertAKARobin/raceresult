@@ -26,6 +26,13 @@ body {
 	width: 100%;
 }
 
+td,
+th {
+	&.numeric {
+		text-align: right !important;
+	}
+}
+
 ._event {
 	box-sizing: border-box;
 	display: flex;
@@ -116,6 +123,20 @@ body {
 		right: 0;
 	}
 
+	& ._bib {
+		width: 60px;
+	}
+
+	& ._name {
+		max-width: 0px; /* Makes ellipsis play nice */
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	& ._time {
+		width: 60px;
+	}
+
 	& .-winner {
 		color: #008800;
 	}
@@ -129,10 +150,7 @@ body {
 		padding: 2px 0;
 		text-align: left;
 		vertical-align: top;
-
-		&.-numeric {
-			text-align: right;
-		}
+		white-space: nowrap;
 	}
 }
 `;

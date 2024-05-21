@@ -30,7 +30,7 @@ const Match = (match: Local.Match) => html`
 								${entrant.nameFirst}
 								${capitalize(entrant.nameLast)}
 							</td>
-							<td class="-numeric">${time ?? ``}</td>
+							<td class="numeric _time">${time ?? ``}</td>
 						</tr>
 					`;
 				}
