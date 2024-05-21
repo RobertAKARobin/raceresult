@@ -1,7 +1,10 @@
 import { css, CssTheme } from '@robertakarobin/util/css/theme.ts';
 
 export const val = {
-	gap: `10px`,
+	color_border: `#bbbbbb`,
+	gap_column: `50px`,
+	margin: `10px`,
+	width_column: `300px`,
 };
 
 export const types = {

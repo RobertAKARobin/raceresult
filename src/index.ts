@@ -12,7 +12,7 @@ const event = await getEventMock();
 document.title = event.name;
 
 const Match = (match: Local.Match) => html`
-<div class="cell">
+<div class="cell _matchWrap">
 	<div class="_match">
 		<h3 class="_head">M ${match.id}</h3>
 
