@@ -19,37 +19,39 @@ const template = html`
 			<div class="_round">
 				<h2 class="cell _head">Round ${round.id}</h2>
 
-				${Object.values(event.matchesById)
-					.filter(match => match.roundId === round.id)
-					.sort(sortOn(match => match.id))
-					.map(match => html`
-						<div class="cell _match">
-							<h3 class="_head">M ${match.id}</h3>
+				<div class="_matches">
+					${Object.values(event.matchesById)
+						.filter(match => match.roundId === round.id)
+						.sort(sortOn(match => match.id))
+						.map(match => html`
+							<div class="cell _match">
+								<h3 class="_head">M ${match.id}</h3>
 
-							<table>
-								${Object.entries(match.timesByBibId)
-									.sort(sortOn(([_nil, time]) => time))
-									.map(
-										([bibId, time]) => {
-											const participant = event.participantsByBibId[bibId];
-											return html`
-												<tr
-													class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
-												>
-													<td class="_bib">#${participant.bibId}</td>
-													<td class="_name">
-														${participant.nameFirst}
-														${capitalize(participant.nameLast)}
-													</td>
-													<td class="-numeric">${time ?? ``}</td>
-												</tr>
-											`;
-										}
-									)}
-							</table>
-						</div>
-					`)
-				}
+								<table>
+									${Object.entries(match.timesByBibId)
+										.sort(sortOn(([_nil, time]) => time))
+										.map(
+											([bibId, time]) => {
+												const entrant = event.participantsByBibId[bibId];
+												return html`
+													<tr
+														class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
+													>
+														<td class="_bib">#${entrant.bibId}</td>
+														<td class="_name">
+															${entrant.nameFirst}
+															${capitalize(entrant.nameLast)}
+														</td>
+														<td class="-numeric">${time ?? ``}</td>
+													</tr>
+												`;
+											}
+										)}
+								</table>
+							</div>
+						`)
+					}
+				</div>
 			</div>
 			`
 		)}

@@ -16,7 +16,6 @@ ${theme.typeClasses}
 
 body {
 	color: #444444;
-	padding: ${theme.vars.gap};
 }
 
 & .cell {
@@ -28,24 +27,34 @@ body {
 }
 
 ._event {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	padding: ${theme.vars.gap};
+	width: 100vw;
+
 	& > ._head {
 		font-weight: bold;
 	}
 
 	& ._rounds {
 		box-sizing: border-box;
-		column-gap: 40px;
-		display: flex;
+		column-gap: 80px;
+		display: grid;
+		flex-grow: 1;
+		grid-auto-columns: minmax(240px, 1fr);
+		grid-auto-flow: column;
 		overflow: auto;
 		padding: calc(${theme.vars.gap} * 2) 0;
+
+		& > * {
+			height: 100%;
+		}
 	}
 }
 
 ._round {
-	display: flex;
-	flex-direction: column;
-	row-gap: calc(2 * ${theme.vars.gap});
-
 	& > ._head {
 		align-items: center;
 		background-color: #eeeeee;
@@ -53,6 +62,23 @@ body {
 		display: flex;
 		font-weight: bold;
 		justify-content: center;
+		margin-bottom: ${theme.vars.gap};
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	& ._matches {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		justify-content: space-around;
+		row-gap: ${theme.vars.gap};
+
+		& > * {
+			flex-grow: 0;
+			flex-shrink: 0;
+		}
 	}
 }
 
@@ -61,6 +87,7 @@ body {
 
 	border: 1px solid #cccccc;
 	border-radius: 3px;
+	height: 70px;
 	position: relative;
 
 	& > ._head,
