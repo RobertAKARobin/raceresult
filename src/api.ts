@@ -2,7 +2,7 @@ import { apiFactory } from '@robertakarobin/util/web/api.ts';
 import { fetchText } from '@robertakarobin/util/fetchText.ts';
 import { keysOf } from '@robertakarobin/util/group/keysOf.ts';
 
-import type * as Local from './types.d.ts';
+import type * as Local from '@src/types.d.ts';
 
 type Particpant = {
 	DisplayName: string;

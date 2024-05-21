@@ -1,3 +1,11 @@
 {
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@src/*": [
+				"src/*"
+			]
+		}
+	},
 	"extends": "@robertakarobin/eslint-config-ts"
 }

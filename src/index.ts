@@ -4,7 +4,7 @@ import { sortOn } from '@robertakarobin/util/group/sortOn.ts';
 // import { getEventById } from './api.ts';
 // const event = await getEventById(`288014`, `65JG83PJ6CASC4MB89V133LGNSPSTW91`);
 
-import { getEventMock } from './api.ts';
+import { getEventMock } from '@src/api.ts';
 const event = await getEventMock();
 
 document.title = event.name;

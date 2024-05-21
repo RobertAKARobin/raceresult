@@ -1,7 +1,10 @@
 {
 	"dependencies": {
 		"@robertakarobin/util": "^0.0.419",
-		"esbuild": "^0.21.3"
+		"esbuild": "^0.21.3",
+		"postcss": "^8.4.38",
+		"postcss-nested": "^6.0.1",
+		"tsx": "^4.10.5"
 	},
 	"description": "todo1",
 	"devDependencies": {
@@ -13,8 +16,10 @@
 	},
 	"name": "todo1",
 	"scripts": {
-		"do:build": "esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
-		"do:serve": "esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
+		"css:build": "tsx css.ts",
+		"css:watch": "tsx --watch-preserve-output --watch css.ts",
+		"do:build": "npm run css:build && esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
+		"do:serve": "npm run css:watch & esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
 		"lint": "npm run lint:ts && echo 'TODO npm run lint:css' && npm run lint:html",
 		"lint:css": "stylelint dist/**/*.css",
 		"lint:html": "html-validate dist",

@@ -3,5 +3,19 @@
 	"ignorePatterns": [
 		"dist/mock.json"
 	],
-	"root": true
+	"root": true,
+	"rules": {
+		"no-restricted-imports": ["error", {
+			"patterns": [
+				{
+					"group": ["*./*"],
+					"message": "Use an absolute path starting with `@src/` instead."
+				},
+				{
+					"group": ["*.js"],
+					"message": "Import .ts files, not .js"
+				}
+			]
+		}]
+	}
 }

@@ -1,6 +1,7 @@
 {
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
+
 	"files.insertFinalNewline": true,
 	"files.trimTrailingWhitespace": true,
 
@@ -22,5 +23,6 @@
 		"css",
 		"less",
 		"postcss",
+		"typescript",
 	]
 }
