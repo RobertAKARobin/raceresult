@@ -1,4 +1,5 @@
 import { apiFactory } from '@robertakarobin/util/web/api.ts';
+import { fetchText } from '@robertakarobin/util/fetchText.ts';
 import { keysOf } from '@robertakarobin/util/group/keysOf.ts';
 
 import type * as Local from './types.d.ts';
@@ -68,6 +69,10 @@ export function eventFromApi(input: Array<Particpant>): Local.Event {
 				}
 			}
 
+			if (result.matchId === 0) {
+				continue;
+			}
+
 			if (roundId in event.roundsById === false) {
 				event.roundsById[roundId] = {
 					id: roundId,
@@ -109,5 +114,10 @@ export const getEventById = async(param1: string, param2: string) => {
 		format: `json`,
 		method: `GET`,
 	});
+	return eventFromApi(result);
+};
+
+export const getEventMock = async() => {
+	const result = JSON.parse(await fetchText(`/mock.json`)) as Array<Particpant>;
 	return eventFromApi(result);
 };

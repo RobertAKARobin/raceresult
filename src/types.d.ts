@@ -21,27 +21,3 @@ export type Participant = {
 export type Round = {
 	id: number;
 };
-
-
-/*
-{
-	"DisplayName": "Henry BRANDOW(55)",
-	"Event": "Beginners - Boys 14 & Under",
-	"QualifyingRank": 1,
-	"r1MatchNumber": 1,
-	"r2MatchNumber": 9,
-	"r3MatchNumber": 13,
-	"r4MatchNumber": 15,
-	"r1Bye": true,
-	"r2Bye": false,
-	"r3Bye": false,
-	"WonRound1": false,
-	"WonRound2": true,
-	"WonRound3": true,
-	"WonRound4": false,
-	"TimeRound1": "",
-	"TimeRound2": "0:42.8",
-	"TimeRound3": "0:41.4",
-	"TimeRound4": "0:43.3"
-}
-*/

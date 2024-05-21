@@ -1,4 +1,7 @@
 {
 	"extends": "@robertakarobin/eslint-config-ts",
+	"ignorePatterns": [
+		"dist/mock.json"
+	],
 	"root": true
 }

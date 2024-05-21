@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@robertakarobin/util": "^0.0.417",
+		"@robertakarobin/util": "^0.0.419",
 		"esbuild": "^0.21.3"
 	},
 	"description": "todo1",
@@ -19,7 +19,7 @@
 		"lint:css": "stylelint dist/**/*.css",
 		"lint:html": "html-validate dist",
 		"lint:ts": "eslint .",
-		"prepare": "husky && ncu -u",
+		"prepare": "husky && ncu",
 		"start": "npm run do:serve",
 		"test": "npm run lint && npx tsc"
 	},
