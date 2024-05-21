@@ -12,30 +12,32 @@ const event = await getEventMock();
 document.title = event.name;
 
 const Match = (match: Local.Match) => html`
-<div class="cell _match">
-	<h3 class="_head">M ${match.id}</h3>
+<div class="cell">
+	<div class="_match">
+		<h3 class="_head">M ${match.id}</h3>
 
-	<table>
-		${Object.entries(match.timesByBibId)
-			.sort(sortOn(([_nil, time]) => time))
-			.map(
-				([bibId, time]) => {
-					const entrant = event.participantsByBibId[bibId];
-					return html`
-						<tr
-							class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
-						>
-							<td class="_bib">#${entrant.bibId}</td>
-							<td class="_name">
-								${entrant.nameFirst}
-								${capitalize(entrant.nameLast)}
-							</td>
-							<td class="numeric _time">${time ?? ``}</td>
-						</tr>
-					`;
-				}
-			)}
-	</table>
+		<table>
+			${Object.entries(match.timesByBibId)
+				.sort(sortOn(([_nil, time]) => time))
+				.map(
+					([bibId, time]) => {
+						const entrant = event.participantsByBibId[bibId];
+						return html`
+							<tr
+								class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
+							>
+								<td class="_bib">#${entrant.bibId}</td>
+								<td class="_name">
+									${entrant.nameFirst}
+									${capitalize(entrant.nameLast)}
+								</td>
+								<td class="numeric _time">${time ?? ``}</td>
+							</tr>
+						`;
+					}
+				)}
+		</table>
+	</div>
 </div>
 `;
 

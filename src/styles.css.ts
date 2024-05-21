@@ -18,14 +18,6 @@ body {
 	color: #444444;
 }
 
-& .cell {
-	box-sizing: border-box;
-	min-height: 40px;
-	min-width: 240px;
-	padding: ${theme.vars.gap};
-	width: 100%;
-}
-
 td,
 th {
 	&.numeric {
@@ -38,38 +30,44 @@ th {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	margin: ${theme.vars.gap} 0;
 	overflow: hidden;
-	padding: 0 ${theme.vars.gap};
+	padding: ${theme.vars.gap};
 	width: 100vw;
 
 	& > ._head {
 		font-weight: bold;
+		margin-bottom: ${theme.vars.gap};
 	}
 
 	& ._rounds {
+		--columnWidth: 300px;
+
 		box-sizing: border-box;
-		column-gap: 80px;
+		column-gap: 50px;
 		display: grid;
 		flex-grow: 1;
-		grid-auto-columns: minmax(240px, 1fr);
 		grid-auto-flow: column;
-		margin: calc(${theme.vars.gap} * 2) 0;
+		grid-template-columns: repeat(auto-fill, var(--columnWidth));
 		overflow: auto;
 
 		& > * {
-			height: 100%;
+			width: var(--columnWidth);
 		}
 	}
 }
 
 ._round {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
 	& > ._head {
 		align-items: center;
 		background-color: #eeeeee;
 		border-radius: 3px;
 		display: flex;
 		font-weight: bold;
+		height: 40px;
 		justify-content: center;
 		margin-bottom: ${theme.vars.gap};
 		position: sticky;
@@ -80,13 +78,15 @@ th {
 	& ._matches {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
-		justify-content: space-around;
+		flex-grow: 1;
 		row-gap: ${theme.vars.gap};
 
 		& > * {
-			flex-grow: 0;
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
 			flex-shrink: 0;
+			justify-content: center;
 		}
 	}
 }
@@ -96,7 +96,9 @@ th {
 
 	border: 1px solid #cccccc;
 	border-radius: 3px;
+	box-sizing: border-box;
 	height: 70px;
+	padding: ${theme.vars.gap};
 	position: relative;
 
 	& > ._head,
