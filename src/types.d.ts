@@ -14,11 +14,10 @@ export type Match = {
 };
 
 export type Participant = {
-	matchIdsByIndex: Set<Match[`id`]>;
 	name: string;
 };
 
 export type Round = {
 	index: number;
-	matchIdsByIndex: Set<Match[`id`]>;
+	matchIdsByIndex: Array<Match[`id`]>;
 };

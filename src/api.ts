@@ -61,7 +61,6 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 
 		const [_, nameFirst, nameLast, bibId] = apiParticipant.DisplayName.match(namePattern)!;
 		const participant: Local.Participant = {
-			matchIdsByIndex: new Set(),
 			name: `${nameFirst} ${capitalize(nameLast)}`,
 		};
 		event.participantsByName[participant.name] = participant;
@@ -128,9 +127,10 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 	const roundIndexByMatchId = {} as Record<Local.Match[`id`], Local.Round[`index`]>;
 	let roundIndex = 0;
 	while (true) {
-		const round = event.roundsByIndex[roundIndex] = {
+		const matchIdsByIndex = new Set<Local.Match[`id`]>();
+		const round: Local.Round = event.roundsByIndex[roundIndex] = {
 			index: roundIndex,
-			matchIdsByIndex: new Set(),
+			matchIdsByIndex: [],
 		};
 
 		for (const name of participantsRemaining) {
@@ -138,7 +138,7 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 			if (matchIds.size === 1) {
 				const matchId = [...matchIds][0];
 				roundIndexByMatchId[matchId] = roundIndex;
-				round.matchIdsByIndex.add(matchId);
+				matchIdsByIndex.add(matchId);
 				participantsRemaining.delete(name);
 			} else {
 				for (const matchId of keysOf(roundIndexByMatchId)) {
@@ -146,6 +146,8 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 				}
 			}
 		}
+
+		round.matchIdsByIndex.push(...matchIdsByIndex);
 
 		if (participantsRemaining.size === 0) {
 			break;
@@ -157,17 +159,26 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 	for (let index = event.roundsByIndex.length - 2; index >= 0; index -= 1) {
 		const round = event.roundsByIndex[index];
 		const roundNext = event.roundsByIndex[index + 1];
-
-		const matchIdsByIndex = [...round.matchIdsByIndex];
-		round.matchIdsByIndex.clear();
-		matchIdsByIndex.sort(sortOn(matchId => {
+		const nextMatchIndexByName = {} as Record<Local.Participant[`name`], number>;
+		const nextMatchIndexByWinnerName = {} as Record<Local.Match[`winnerName`], number>;
+		roundNext.matchIdsByIndex.forEach((matchId, matchIndex) => {
 			const match = event.matchesById[matchId];
-			return [...roundNext.matchIdsByIndex].findIndex(matchId => {
-				const matchNext = event.matchesById[matchId];
-				return match.winnerName in matchNext.timesByName;
-			});
+
+			nextMatchIndexByWinnerName[match.winnerName] = matchIndex;
+
+			for (const name in match.timesByName) {
+				nextMatchIndexByName[name] = matchIndex;
+			}
+		});
+
+		round.matchIdsByIndex.sort(sortOn(matchId => {
+			const match = event.matchesById[matchId];
+			const name = match.winnerName;
+			const matchNextIndex = nextMatchIndexByName[name];
+			const matchNextId = roundNext.matchIdsByIndex[matchNextIndex];
+			const matchNext = event.matchesById[matchNextId];
+			return matchNextIndex - (matchNext.winnerName === name ? 0.1 : 0);
 		}));
-		matchIdsByIndex.forEach(matchId => round.matchIdsByIndex.add(matchId));
 	}
 
 	return event;
