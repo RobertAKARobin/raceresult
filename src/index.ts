@@ -12,7 +12,7 @@ if (querystring.has(`url`) === false) {
 
 const url = querystring.get(`url`) as string;
 
-const inputEl = document.getElementById(`input`)! as HTMLInputElement;
+const inputEl = document.getElementById(`input`) as HTMLInputElement;
 const submitEl = document.getElementById(`submit`) as HTMLButtonElement;
 inputEl.value = url;
 inputEl.disabled = true;
@@ -76,6 +76,8 @@ const Event = (event: Local.Event) => html`
 		<h1 class="_title">${event.name}</h1>
 
 		<a href="/" target="_top">Clear</a>
+
+		<a href="${url}" target="_blank">Data source</a>
 	</header>
 
 	<div class="_rounds">
