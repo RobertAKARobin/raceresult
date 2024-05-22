@@ -1,5 +1,7 @@
+import { capitalize } from '@robertakarobin/util/string/capitalize.ts';
 import { fetchText } from '@robertakarobin/util/fetchText.ts';
 import { keysOf } from '@robertakarobin/util/group/keysOf.ts';
+import { sortOn } from '@robertakarobin/util/group/sortOn.ts';
 
 import type * as Local from '@src/types.d.ts';
 
@@ -35,11 +37,18 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 	const event: Local.Event = {
 		matchesById: {},
 		name: undefined as unknown as string,
-		participantsByBibId: {},
-		roundsById: {},
+		participantsByName: {},
+		roundsByIndex: [],
 	};
 
-	const nameMatch = /(\w+)\s(\w+)\((\d+)\)/;
+	const namePattern = /(\w+)\s(\w+)\((\d+)\)/;
+
+	const matchIdsByParticipantName = {} as Record<
+		Local.Participant[`name`],
+		Set<Local.Match[`id`]>
+	>;
+
+	matchIdsByParticipantName[`bye`] = new Set();
 
 	for (const apiParticipant of input) {
 		if (typeof event.name === `undefined`) {
@@ -50,14 +59,14 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 			throw new Error(`${apiParticipant.DisplayName} event is '${apiParticipant.Event}'; expected '${event.name}'`);
 		}
 
-		const [_, nameFirst, nameLast, bibId] = apiParticipant.DisplayName.match(nameMatch)!;
+		const [_, nameFirst, nameLast, bibId] = apiParticipant.DisplayName.match(namePattern)!;
 		const participant: Local.Participant = {
-			bibId,
-			nameFirst,
-			nameLast,
-			rank: apiParticipant.QualifyingRank,
+			matchIdsByIndex: new Set(),
+			name: `${nameFirst} ${capitalize(nameLast)}`,
 		};
-		event.participantsByBibId[participant.bibId] = participant;
+		event.participantsByName[participant.name] = participant;
+
+		const participantMatchIds = matchIdsByParticipantName[participant.name] ??= new Set();
 
 		let roundId = 0;
 		while (true) {
@@ -84,31 +93,81 @@ export function eventFromApi(input: Array<Participant>): Local.Event {
 				continue;
 			}
 
-			if (roundId in event.roundsById === false) {
-				event.roundsById[roundId] = {
-					id: roundId,
-				};
-			}
+			const matchId = `${result.matchId}`;
 
 			const match = event.matchesById[result.matchId] ??= {
-				id: result.matchId,
-				roundId,
-				status: `incomplete`,
-				timesByBibId: {},
-				winnerBibId: undefined,
+				bibIdsByName: {},
+				id: matchId,
+				roundId: -1,
+				timesByName: {},
+				winnerName: undefined as unknown as Local.Participant[`name`],
 			};
 
-			match.timesByBibId[participant.bibId] = result.time;
+			match.bibIdsByName[participant.name] = bibId;
+			match.timesByName[participant.name] = result.time;
+			participantMatchIds.add(match.id);
 
 			if (result.isWin) {
-				match.status = `complete`;
-				match.winnerBibId = participant.bibId;
+				match.winnerName = participant.name;
 			}
 
 			if (result.isBye) {
-				match.timesByBibId[participant.bibId] = `bye`;
+				match.timesByName[participant.name] = `bye`;
+				match.winnerName = participant.name;
+				matchIdsByParticipantName[`bye`].add(match.id);
 			}
 		}
+	}
+
+	const participantsRemaining = new Set(
+		Object.keys(matchIdsByParticipantName).sort(
+			sortOn(name => matchIdsByParticipantName[name].size)
+		)
+	);
+
+	const roundIndexByMatchId = {} as Record<Local.Match[`id`], Local.Round[`index`]>;
+	let roundIndex = 0;
+	while (true) {
+		const round = event.roundsByIndex[roundIndex] = {
+			index: roundIndex,
+			matchIdsByIndex: new Set(),
+		};
+
+		for (const name of participantsRemaining) {
+			const matchIds = matchIdsByParticipantName[name];
+			if (matchIds.size === 1) {
+				const matchId = [...matchIds][0];
+				roundIndexByMatchId[matchId] = roundIndex;
+				round.matchIdsByIndex.add(matchId);
+				participantsRemaining.delete(name);
+			} else {
+				for (const matchId of keysOf(roundIndexByMatchId)) {
+					matchIds.delete(matchId);
+				}
+			}
+		}
+
+		if (participantsRemaining.size === 0) {
+			break;
+		}
+
+		roundIndex += 1;
+	}
+
+	for (let index = event.roundsByIndex.length - 2; index >= 0; index -= 1) {
+		const round = event.roundsByIndex[index];
+		const roundNext = event.roundsByIndex[index + 1];
+
+		const matchIdsByIndex = [...round.matchIdsByIndex];
+		round.matchIdsByIndex.clear();
+		matchIdsByIndex.sort(sortOn(matchId => {
+			const match = event.matchesById[matchId];
+			return [...roundNext.matchIdsByIndex].findIndex(matchId => {
+				const matchNext = event.matchesById[matchId];
+				return match.winnerName in matchNext.timesByName;
+			});
+		}));
+		matchIdsByIndex.forEach(matchId => round.matchIdsByIndex.add(matchId));
 	}
 
 	return event;

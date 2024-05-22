@@ -1,25 +1,24 @@
 export type Event = {
 	matchesById: Record<Match[`id`], Match>;
 	name: string;
-	participantsByBibId: Record<Participant[`bibId`], Participant>;
-	roundsById: Record<Round[`id`], Round>;
+	participantsByName: Record<Participant[`name`], Participant>;
+	roundsByIndex: Array<Round>;
 };
 
 export type Match = {
-	id: number;
-	roundId: Round[`id`];
-	status: `complete` | `incomplete`;
-	timesByBibId: Record<Participant[`bibId`], string>;
-	winnerBibId: Participant[`bibId`] | undefined;
+	bibIdsByName: Record<Participant[`name`], string>;
+	id: string;
+	roundId: Round[`index`];
+	timesByName: Record<Participant[`name`], string>;
+	winnerName: Participant[`name`];
 };
 
 export type Participant = {
-	bibId: string;
-	nameFirst: string;
-	nameLast: string;
-	rank: number;
+	matchIdsByIndex: Set<Match[`id`]>;
+	name: string;
 };
 
 export type Round = {
-	id: number;
+	index: number;
+	matchIdsByIndex: Set<Match[`id`]>;
 };

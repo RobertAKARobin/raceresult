@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@robertakarobin/util": "^0.0.422",
+		"@robertakarobin/util": "^0.0.423",
 		"esbuild": "^0.21.3",
 		"postcss": "^8.4.38",
 		"postcss-nested": "^6.0.1",

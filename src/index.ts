@@ -1,4 +1,3 @@
-import { capitalize } from '@robertakarobin/util/string/capitalize.ts';
 import { html } from '@robertakarobin/util/string/template.ts';
 import { sortOn } from '@robertakarobin/util/group/sortOn.ts';
 import { tryCatch } from '@robertakarobin/util/tryCatch.ts';
@@ -50,20 +49,17 @@ const Match = (match: Local.Match) => html`
 		<h3 class="_head">M ${match.id}</h3>
 
 		<table>
-			${Object.entries(match.timesByBibId)
+			${Object.entries(match.timesByName)
 				.sort(sortOn(([_nil, time]) => time))
 				.map(
-					([bibId, time]) => {
-						const entrant = event.participantsByBibId[bibId];
+					([name, time]) => {
+						const participant = event.participantsByName[name];
 						return html`
 							<tr
-								class="_participant ${bibId === match.winnerBibId ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
+								class="_participant ${name === match.winnerName ? `-winner` : ``} ${time === `bye` ? `-bye` : ``}"
 							>
-								<td class="_bib">#${entrant.bibId}</td>
-								<td class="_name">
-									${entrant.nameFirst}
-									${capitalize(entrant.nameLast)}
-								</td>
+								<td class="_bib">#${match.bibIdsByName[name]}</td>
+								<td class="_name">${participant.name}</td>
 								<td class="numeric _time">${time ?? ``}</td>
 							</tr>
 						`;
@@ -83,20 +79,18 @@ const Event = (event: Local.Event) => html`
 	</header>
 
 	<div class="_rounds">
-		${Object.values(event.roundsById).map(round => html`
+		${event.roundsByIndex.map(round => html`
 			<div class="_round">
-				<h2 class="cell _head">Round ${round.id}</h2>
+				<h2 class="cell _head">Round ${round.index + 1}</h2>
 
 				<div class="_matches">
-					${Object.values(event.matchesById)
-						.filter(match => match.roundId === round.id)
-						.sort(sortOn(match => match.id))
-						.map(Match)
-					}
+					${[...round.matchIdsByIndex].map(matchId => {
+						const match = event.matchesById[matchId];
+						return Match(match);
+					})}
 				</div>
 			</div>
-			`
-		)}
+		`)}
 	</div>
 </div>
 `;
