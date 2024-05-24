@@ -2,22 +2,20 @@
 	"dependencies": {
 		"@robertakarobin/util": "^0.0.423",
 		"esbuild": "^0.21.3",
-		"postcss": "^8.4.38",
-		"postcss-nested": "^6.0.1",
-		"tsx": "^4.10.5"
+		"tsx": "^4.11.0"
 	},
 	"description": "todo1",
 	"devDependencies": {
-		"@robertakarobin/csslint": "^0.0.27",
-		"@robertakarobin/eslint-config-ts": "^0.0.45",
+		"@robertakarobin/csslint": "^0.0.32",
+		"@robertakarobin/eslint-config-ts": "^0.0.47",
 		"@robertakarobin/htmlvalidate": "^0.0.9",
 		"husky": "^9.0.11",
 		"npm-check-updates": "^16.14.20"
 	},
 	"name": "todo1",
 	"scripts": {
-		"css:build": "tsx css.ts",
-		"css:watch": "tsx --watch-preserve-output --watch css.ts",
+		"css:build": "cssts src/styles.css.ts dist/styles.css",
+		"css:watch": "cssts src/styles.css.ts dist/styles.css -- --watch-preserve-output --watch",
 		"do:build": "npm run css:build && esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext src/index.ts",
 		"do:serve": "npm run css:watch & esbuild --bundle --format=esm --outdir=dist --platform=browser --target=esnext --servedir=dist --watch src/index.ts",
 		"lint": "npm run lint:ts && npm run lint:css && npm run lint:html",
